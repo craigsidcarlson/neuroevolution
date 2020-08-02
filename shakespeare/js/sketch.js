@@ -26,11 +26,13 @@ function draw() {
   body.evolve();
   textSize(24);
   fill(255);
-  if(frameCount % 5 === 0 || header.finished || body.finished)  {
+  if(frameCount % 5 === 0)  {
     draw_best_header = header.best;
     draw_best_body = body.best;
-
   }
+  if (header.finished) draw_best_header = header.best;
+  if (body.finished) draw_best_body = body.best;
+
   text(draw_best_header, 10, 30);
   text(draw_best_body, 10, 60);
 
