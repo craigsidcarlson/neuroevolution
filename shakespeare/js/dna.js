@@ -23,7 +23,7 @@ class DNA {
      const this_ascii = this.genes[i].charCodeAt(0);
      const target_ascii = target.charCodeAt(i);
     if(this_ascii === target_ascii) score++;
-    else if(this_ascii > 65 && this_ascii <=122 && (this_ascii - target_ascii === 32 || this_ascii - target_ascii === -32 )) score += 0.5;
+    else if(this_ascii > 64 && this_ascii <= 90 && this_ascii > 96 && this_ascii <=122 && (this_ascii - target_ascii === 32 || this_ascii - target_ascii === -32 )) score += 0.7;
    }
    this.fitness = score / target.length;
  }
