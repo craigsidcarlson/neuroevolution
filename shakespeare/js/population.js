@@ -8,13 +8,12 @@ class Population {
     this.perfect_score = 1;
     this.num_individuals = num_ind;
     this.best = '';
-
+    this.fitness_sum = 0;
+    this.max_fitness = 0;
     this.individuals = [];
     for (let i = 0; i < this.num_individuals; i++) {
       this.individuals[i] = new DNA(this.target.length);
     }
-
-    this.max_fitness = 0;
   }
 
   evolve() {
@@ -28,8 +27,10 @@ class Population {
 
   // Calculate Fitness
   calculate_fitness() {
+    this.fitness_sum = 0;
     for (let i = 0; i < this.individuals.length; i++) {
-      this.individuals[i].calculate_fitness(this.target);
+      const fitness = this.individuals[i].calculate_fitness(this.target);
+      this.fitness_sum += fitness;
     }
   }
   // Generate mating pool
@@ -42,13 +43,14 @@ class Population {
         if (this.best === this.target) this.finished = true;
       }
     }
+
   }
   // Create next generation
   generate() {
     const next_generation = [];
     for (let i = 0; i < this.individuals.length; i++) {
-      const parent_a = this.acceptReject();
-      const parent_b = this.acceptReject();
+      const parent_a = this.pickOne(this.individuals);
+      const parent_b = this.pickOne(this.individuals);
       const child = parent_a.breedWith(parent_b);
       child.mutate(this.mutation_rate);
       next_generation[i] = child;
@@ -57,17 +59,14 @@ class Population {
     this.individuals = next_generation;
   }
 
-  acceptReject() {
-    let safety = 0
-    while (true) {
-      const index = floor(random(this.individuals.length));
-      const partner = this.individuals[index];
-      const r = random(this.max_fitness);
-      if (r < partner.fitness) {
-        return partner;
-      }
-      safety++;
-      if(safety > 10000) return;
+  pickOne(list) {
+    let index = 0;
+    let r = random(0, this.fitness_sum);
+    while (r > 0) {
+      r -= list[index].fitness;
+      index++;
     }
+
+    return list[index-1];
   }
 }

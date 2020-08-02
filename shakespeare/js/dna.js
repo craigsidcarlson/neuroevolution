@@ -4,6 +4,7 @@ class DNA {
   this.slice_point = ceil(random(0, this.target_length));
   this.genes = [];
   this.fitness = 0;
+  this.accept_probability = 0.01;
   this.possible_characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\'.!?,:;/@\\ ';
   if (!child) {
     for ( var i = 0; i < target_length; i++ ) {
@@ -25,7 +26,8 @@ class DNA {
     if(this_ascii === target_ascii) score++;
    }
    this.fitness = score / target.length;
-   this.fitness = pow(this.fitness, 5 + 0.01);
+   this.fitness = pow(this.fitness, 5);
+   return this.fitness;
  }
 
  breedWith(parent_b) {
