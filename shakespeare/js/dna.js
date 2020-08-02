@@ -20,7 +20,10 @@ class DNA {
  calculate_fitness(target) {
    let score = 0;
    for (let i = 0; i < this.genes.length; i++) {
-    if(this.genes[i] === target.charAt(i)) score++;
+     const this_ascii = this.genes[i].charCodeAt(0);
+     const target_ascii = target.charCodeAt(i);
+    if(this_ascii === target_ascii) score++;
+    else if(this_ascii > 65 && this_ascii <=122 && (this_ascii - target_ascii === 32 || this_ascii - target_ascii === -32 )) score += 0.5;
    }
    this.fitness = score / target.length;
  }

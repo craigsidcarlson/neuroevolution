@@ -38,8 +38,8 @@ function draw() {
 
   textSize(14);
 
-  // text(`Current generation: ${population.generation}`, 10, height - 30);
-  // text(`Time taken: ${(Date.now() - start_time) / 1000} seconds`, 10, height - 10)
+  text(`Current generation: ${frameCount}`, 10, height - 30);
+  text(`Time taken: ${(Date.now() - start_time) / 1000} seconds`, 10, height - 10)
   if (header.finished && body.finished) noLoop();
 }
 
