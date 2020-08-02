@@ -25,7 +25,7 @@ class DNA {
     if(this_ascii === target_ascii) score++;
    }
    this.fitness = score / target.length;
-   this.fitness = pow(this.fitness, 4);
+   this.fitness = pow(this.fitness, 5 + 0.01);
  }
 
  breedWith(parent_b) {
