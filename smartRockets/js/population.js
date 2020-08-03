@@ -1,6 +1,6 @@
 class Population {
   constructor(rate = 0.01, num_ind = 200) {
-    this.lifespan = 600;
+    this.lifespan = 1000;
     this.generation = 0;
     this.finished = false;
     this.mutation_rate = rate;

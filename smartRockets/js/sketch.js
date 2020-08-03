@@ -21,7 +21,7 @@ function setup() {
 function init() {
   const mutation_rate = 0.01;
   const population_size = 200;
-  destination = createVector(width/2, 25);
+  destination = createVector(width - 25, height/2);
   population = new Population(mutation_rate, population_size);
 }
  
