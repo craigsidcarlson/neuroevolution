@@ -41,10 +41,16 @@ class Rocket {
       this.cycle_arrived = cycle;
     }
 
-    for (let i = 0; i < obstacles.length; i++)
-    if (this.intersectsObstacles(obstacles)) {
+    if (this.pos.x < 0 || this.pos.x > width || this.pos.y < 0 || this.pos.y > height) {
       this.crashed = true;
-      this.color = color('red');
+      this.color = color('purple');
+    }
+
+    for (let i = 0; i < obstacles.length; i++) {
+      if (this.intersectsObstacles(obstacles)) {
+        this.crashed = true;
+        this.color = color('red');
+      }
     }
 
     this.applyForce(this.dna.genes[cycle]);

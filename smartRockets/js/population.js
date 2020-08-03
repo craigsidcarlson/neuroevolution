@@ -18,6 +18,7 @@ class Population {
   }
 
   show() {
+    let rockets_finished = 0;
     if (this.cycle > this.lifespan) return;
     for (let i = 0; i < this.rockets.length; i++) {
       const cycle_arrived = this.rockets[i].update(this.cycle);
@@ -26,7 +27,9 @@ class Population {
         if (time < this.fastest_time) this.fastest_time = time;
       }
       this.rockets[i].show();
+      if (this.rockets[i].crashed || this.rockets[i].arrived) rockets_finished++;
     }
+    if (rockets_finished === this.rockets.length) return;
     this.cycle--;
     return this.cycle;
   }
