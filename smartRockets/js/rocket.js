@@ -6,24 +6,57 @@ class Rocket {
     this.special = false;
     this.color = this.special ? color('red') : color(246, 193, 1, 150);
     this.dna = new DNA(lifespan);
+    this.max_speed = 3;
+    this.arrived = false;
+    this.crashed = false;
+    this.abs_dist;
+    this.cycle_arrived;
   }
 
   applyForce(force) {
     this.acc.add(force);
   }
 
-  calculate_fitness(target) {
-    const d = dist(this.pos.x, this.pos.y, target.x, target.y);
-    const fitness = 1 / d;
+  // pass in target (x & y coordinates that it is trying to reach) 
+  calculate_fitness() {
+    const fitness = 1 / (this.abs_dist + 0.00001);
     this.dna.fitness = pow(fitness, 4);
+
+    if (this.crashed) {
+      this.dna.fitness /= 10;
+    }
+
+    if (this.arrived) {
+      if (this.cycle_arrived > 1 ) debugger;
+      this.dna.fitness *= this.cycle_arrived;
+    }
     return this.dna.fitness;
   }
 
   update(cycle) {
+    this.abs_dist = abs(dist(this.pos.x, this.pos.y, destination.x, destination.y));
+    if (this.abs_dist < 4) {
+      this.arrived = true;
+      this.color = color('red');
+      this.cycle_arrived = cycle;
+    }
+
+    if (
+      this.pos.x > rx &&
+      this.pos.x < rx + rw && 
+      this.pos.y > ry &&
+      this.pos.y < ry + rh
+    ) {
+      this.crashed = true;
+    }
+
     this.applyForce(this.dna.genes[cycle]);
-    this.vel.add(this.acc);
-    this.pos.add(this.vel);
-    this.acc.mult(0);
+    if (!this.arrived && !this.crashed) {
+      this.vel.add(this.acc);
+      this.vel.limit(this.max_speed);
+      this.pos.add(this.vel);
+      this.acc.mult(0);
+    }
   }
 
   show() {

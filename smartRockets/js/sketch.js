@@ -5,6 +5,11 @@ let draw_best_header, draw_best_body;
 let destination;
 let population;
 let lifeCycleText, genText;
+const rx = 100;
+const ry = 150;
+const rw = 200;
+const rh = 10;
+
 
 function setup() {
   width = 500;
@@ -32,6 +37,11 @@ function draw() {
   ellipse(destination.x, destination.y, 12, 12);
   lifeCycleText.html(`Life cycle: ${cycle}`);
   genText.html(`Generation: ${population.generation}`);
+
+  fill(255);
+  rect(rx, ry, rw, rh);
+
+
 
   if (!cycle) {
     population.evolve(destination);

@@ -3,7 +3,6 @@ class Population {
     this.lifespan = 300;
     this.generation = 0;
     this.finished = false;
-    this.target = createVector(width/2, height/2);
     this.mutation_rate = rate;
     this.perfect_score = 1;
     this.num_individuals = num_ind;
@@ -14,7 +13,7 @@ class Population {
     for (let i = 0; i < this.num_individuals; i++) {
       this.rockets[i] = new Rocket(this.lifespan);
     }
-    this.cycle = 0;
+    this.cycle = this.lifespan;
   }
 
   show() {
@@ -23,13 +22,13 @@ class Population {
       this.rockets[i].update(this.cycle);
       this.rockets[i].show();
     }
-    this.cycle++;
+    this.cycle--;
     return this.cycle;
   }
 
   evolve(destination) {
-    this.cycle = 0;
-    this.calculate_fitness(destination);
+    this.cycle = this.lifespan;
+    this.calculate_fitness(destination, this.cycle);
     this.generate();
     this.generation++;
   }
