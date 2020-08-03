@@ -32,7 +32,7 @@ function draw() {
   fill(255);
   noStroke();
   ellipse(destination.x, destination.y, 12, 12);
-  text(`Steps remaining: ${cycle}`, 10, height - 50);
+  text(`Step: ${population.lifespan - cycle}`, 10, height - 50);
   text(`Generation: ${population.generation}`, 10, height - 30);
   text(`Best time: ${population.gen_fastest_time}`, 100, height - 30);
   text(`Overall Best time: ${population.fastest_time}`, 10, height - 10);
