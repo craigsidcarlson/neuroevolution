@@ -4,23 +4,18 @@ let start_time;
 let draw_best_header, draw_best_body;
 let destination;
 let population;
-let lifeCycleText, genText;
-const rx = 100;
-const ry = 150;
-const rw = 200;
-const rh = 10;
-
+const obstacles = [];
+let rx, ry;
+let newRect;
 
 function setup() {
-  width = 500;
-  height = 500;
+  debugger;
+  width = windowWidth * 0.9;
+  height = windowHeight * 0.9;
   x = (windowWidth - width) / 2;
   y = (windowHeight - height) / 2;
   const cnv = createCanvas(width, height);
   cnv.position(x, y);
-  lifeCycleText = createP();
-  genText = createP();
-
   init();
 }
 
@@ -32,24 +27,37 @@ function init() {
 }
  
 function draw() {
-  background(51);
+  background(44, 62, 80);
   const cycle = population.show();
-  ellipse(destination.x, destination.y, 12, 12);
-  lifeCycleText.html(`Life cycle: ${cycle}`);
-  genText.html(`Generation: ${population.generation}`);
 
   fill(255);
-  rect(rx, ry, rw, rh);
-
-
-
+  noStroke();
+  ellipse(destination.x, destination.y, 12, 12);
+  text(`Life cycle: ${cycle}`, 10, height - 50);
+  text(`Generation: ${population.generation}`, 10, height - 30);
+  text(`Fastest time: ${population.fastest_time}`, 10, height - 10);
+  for (let i = 0; i < obstacles.length; i++) {
+    rect(obstacles[i].x, obstacles[i].y, obstacles[i].w, obstacles[i].h);
+  }
   if (!cycle) {
     population.evolve(destination);
   }
+  if (rx) {
+    rect(rx, ry, mouseX-rx, mouseY-ry);
+  }
+
 }
 
-function mouseClicked() {
+function mousePressed() {
   console.log(`x: ${mouseX}, y: ${mouseY}`);
+  if (!rx) {
+    rx = mouseX;
+    ry = mouseY;
+  } else {
+    obstacles.push({x: rx, y: ry, w: mouseX-rx, h: mouseY-ry });
+    rx = null;
+    ry = null;
+  }
   // prevent default
   return false;
 }

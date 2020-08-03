@@ -10,7 +10,7 @@ class Rocket {
     this.arrived = false;
     this.crashed = false;
     this.abs_dist;
-    this.cycle_arrived;
+    this.cycle_arrived = 0;
   }
 
   applyForce(force) {
@@ -27,25 +27,25 @@ class Rocket {
     }
 
     if (this.arrived) {
-      if (this.cycle_arrived > 1 ) debugger;
-      this.dna.fitness *= this.cycle_arrived;
+      this.dna.fitness *= pow(this.cycle_arrived, 4);
     }
     return this.dna.fitness;
   }
 
   update(cycle) {
     this.abs_dist = abs(dist(this.pos.x, this.pos.y, destination.x, destination.y));
-    if (this.abs_dist < 4) {
+    if (this.abs_dist < 4 && !this.arrived) {
       this.arrived = true;
       this.color = color('red');
       this.cycle_arrived = cycle;
     }
 
+    for (let i = 0; i < obstacles.length; i++)
     if (
-      this.pos.x > rx &&
-      this.pos.x < rx + rw && 
-      this.pos.y > ry &&
-      this.pos.y < ry + rh
+      this.pos.x > obstacles[i].x &&
+      this.pos.x <  obstacles[i].x +  obstacles[i].w && 
+      this.pos.y >  obstacles[i].y &&
+      this.pos.y <  obstacles[i].y +  obstacles[i].h
     ) {
       this.crashed = true;
     }
@@ -57,6 +57,7 @@ class Rocket {
       this.pos.add(this.vel);
       this.acc.mult(0);
     }
+    return this.cycle_arrived;
   }
 
   show() {

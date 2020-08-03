@@ -1,6 +1,6 @@
 class Population {
   constructor(rate = 0.01, num_ind = 200) {
-    this.lifespan = 300;
+    this.lifespan = 1000;
     this.generation = 0;
     this.finished = false;
     this.mutation_rate = rate;
@@ -14,12 +14,18 @@ class Population {
       this.rockets[i] = new Rocket(this.lifespan);
     }
     this.cycle = this.lifespan;
+    this.fastest_time = Infinity;
   }
 
   show() {
     if (this.cycle > this.lifespan) return;
     for (let i = 0; i < this.rockets.length; i++) {
-      this.rockets[i].update(this.cycle);
+      const cycle_arrived = this.rockets[i].update(this.cycle);
+      if (cycle_arrived) {
+        const time = this.lifespan - cycle_arrived;
+        if (time < this.fastest_time) this.fastest_time = time;
+        return;
+      }
       this.rockets[i].show();
     }
     this.cycle--;
