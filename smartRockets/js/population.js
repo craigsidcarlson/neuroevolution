@@ -24,7 +24,6 @@ class Population {
       if (cycle_arrived) {
         const time = this.lifespan - cycle_arrived;
         if (time < this.fastest_time) this.fastest_time = time;
-        return;
       }
       this.rockets[i].show();
     }

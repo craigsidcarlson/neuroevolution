@@ -11,7 +11,7 @@ class Rocket {
     this.crashed = false;
     this.abs_dist;
     this.cycle_arrived = 0;
-    this.num_done = 0;
+    this.collision_dist = 2;
   }
 
   applyForce(force) {
@@ -37,18 +37,14 @@ class Rocket {
     this.abs_dist = abs(dist(this.pos.x, this.pos.y, destination.x, destination.y));
     if (this.abs_dist < 4 && !this.arrived) {
       this.arrived = true;
-      this.color = color('red');
+      this.color = color('green');
       this.cycle_arrived = cycle;
     }
 
     for (let i = 0; i < obstacles.length; i++)
-    if (
-      this.pos.x > obstacles[i].x &&
-      this.pos.x <  obstacles[i].x +  obstacles[i].w && 
-      this.pos.y >  obstacles[i].y &&
-      this.pos.y <  obstacles[i].y +  obstacles[i].h
-    ) {
+    if (this.intersectsObstacles(obstacles)) {
       this.crashed = true;
+      this.color = color('red');
     }
 
     this.applyForce(this.dna.genes[cycle]);
@@ -59,6 +55,29 @@ class Rocket {
       this.acc.mult(0);
     }
     return this.cycle_arrived;
+  }
+
+  intersectsObstacles(obs) {
+    for (let i = 0; i < obs.length; i++) {
+      const distance = this.calcDistanceToLineSegment(obs[i]);
+      if (distance < this.collision_dist) return true;
+    }
+    return false;
+  }
+
+  calcDistanceToLineSegment(o) {
+    const dist_a = dist(this.pos.x, this.pos.y, o.x1, o.y1);
+    const dist_b = dist(this.pos.x, this.pos.y, o.x2, o.y2);
+    const dist_c = dist(o.x1, o.y1,o.x2, o.y2);
+    
+    if (sq(dist_b) > (sq(dist_a) + sq(dist_c))) {
+      return dist_a;
+    } else if(sq(dist_a) > (sq(dist_b) + sq(dist_c))) {
+      return dist_b;
+    } else {
+      const s = (dist_a + dist_b + dist_c)/2;
+      return (2/dist_c) * sqrt(s * (s-dist_a)*(s-dist_b)*(s-dist_c));
+    }
   }
 
   show() {

@@ -5,7 +5,7 @@ let draw_best_header, draw_best_body;
 let destination;
 let population;
 const obstacles = [];
-let rx, ry;
+let x1, y1;
 let newRect;
 
 function setup() {
@@ -36,27 +36,33 @@ function draw() {
   text(`Generation: ${population.generation}`, 10, height - 30);
   text(`Fastest time: ${population.fastest_time}`, 10, height - 10);
   for (let i = 0; i < obstacles.length; i++) {
-    rect(obstacles[i].x, obstacles[i].y, obstacles[i].w, obstacles[i].h);
+    stroke(255);
+    strokeWeight(2);
+    line(obstacles[i].x1, obstacles[i].y1, obstacles[i].x2, obstacles[i].y2);
   }
   if (!cycle) {
     population.evolve(destination);
   }
-  if (rx) {
-    rect(rx, ry, mouseX-rx, mouseY-ry);
+  if (x1) {
+    stroke(255);
+    strokeWeight(5);
+    line(x1, y1, mouseX, mouseY);
   }
 
 }
 
 function mousePressed() {
-  console.log(`x: ${mouseX}, y: ${mouseY}`);
-  if (!rx) {
-    rx = mouseX;
-    ry = mouseY;
-  } else {
-    obstacles.push({x: rx, y: ry, w: mouseX-rx, h: mouseY-ry });
-    rx = null;
-    ry = null;
+  if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) { 
+    if (!x1) {
+      x1 = mouseX;
+      y1 = mouseY;
+    } else {
+      obstacles.push({x1, y1, x2: mouseX, y2: mouseY });
+      x1 = null;
+      y1 = null;
+    }
   }
+  
   // prevent default
   return false;
 }
