@@ -13,6 +13,7 @@ class Rocket {
     this.fled = false;
     this.abs_dist;
     this.cycle_arrived = 0;
+    this.cycle_failed = this.lifespan;
     this.collision_dist = 2;
   }
 
@@ -22,21 +23,18 @@ class Rocket {
 
   // pass in target (x & y coordinates that it is trying to reach) 
   calculate_fitness() {
-    const fitness = 1 / (this.abs_dist + 0.00001);
-    this.dna.fitness = pow(fitness, 3);
-
-    if (this.crashed) {
-      this.dna.fitness *= 0.5;
-    }
-
-    if(this.fled) {
-      this.dna.fitness *= 0.9;
-    }
-
     if (this.arrived) {
-      const speed_fitness = 1 / (this.cycle_arrived / this.lifespan )
-      this.dna.fitness *= pow(speed_fitness, 3);
+      this.dna.fitness = 1;
+    } else  {
+      const inverse_dist = 1 / (this.abs_dist + 0.00000001);
+      this.dna.fitness = pow(inverse_dist, 3);
     }
+
+    if (this.crashed) this.dna.fitness *= 0.1;
+    if (this.fled) this.dna.fitness *= 0.5;
+    this.dna.fitness *= ((this.cycle_arrived / this.lifespan) + 0.00000001); 
+
+    
     return this.dna.fitness;
   }
 
@@ -51,12 +49,14 @@ class Rocket {
     if (this.pos.x < 0 || this.pos.x > width || this.pos.y < 0 || this.pos.y > height) {
       this.fled = true;
       this.color = color('purple');
+      this.cycle_failed = cycle;
     }
 
     for (let i = 0; i < obstacles.length; i++) {
       if (this.intersectsObstacles(obstacles)) {
         this.crashed = true;
         this.color = color('red');
+        this.cycle_failed = cycle;
       }
     }
 

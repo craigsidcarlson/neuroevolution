@@ -3,10 +3,11 @@ class Population {
     this.lifespan = floor(width);
     this.generation = 0;
     this.finished = false;
-    this.mutation_rate = rate;
+    this.init_mutation_rate = rate;
+    this.mutation_rate = this.init_mutation_rate;
+    this.mutation_change = 0.97;
     this.perfect_score = 1;
     this.num_individuals = num_ind;
-    this.best = '';
     this.fitness_sum = 0;
     this.max_fitness = 0;
     this.rockets = [];
@@ -15,6 +16,9 @@ class Population {
     }
     this.cycle = this.lifespan;
     this.fastest_time = Infinity;
+    this.gen_fastest_time = Infinity;
+
+    this.any_rocket_arrived = false;
   }
 
   show() {
@@ -23,8 +27,9 @@ class Population {
     for (let i = 0; i < this.rockets.length; i++) {
       const cycle_arrived = this.rockets[i].update(this.cycle);
       if (cycle_arrived) {
+        this.any_rocket_arrived = true;
         const time = this.lifespan - cycle_arrived;
-        if (time < this.fastest_time) this.fastest_time = time;
+        if (time < this.gen_fastest_time) this.gen_fastest_time = time;
       }
       this.rockets[i].show();
       if (this.rockets[i].crashed || this.rockets[i].arrived || this.rockets[i].fled) rockets_finished++;
@@ -36,16 +41,22 @@ class Population {
 
   evolve(destination) {
     this.cycle = this.lifespan;
+    if (this.gen_fastest_time < this.fastest_time) this.fastest_time = this.gen_fastest_time;
     this.calculate_fitness(destination, this.cycle);
+    this.updateMutation();
     this.generate();
     this.generation++;
+    this.any_rocket_arrived = false;
+    this.gen_fastest_time = Infinity;
   }
 
   // Calculate Fitness
   calculate_fitness(destination) {
     this.fitness_sum = 0;
+    this.max_fitness = 0;
     for (let i = 0; i < this.rockets.length; i++) {
       const fitness = this.rockets[i].calculate_fitness(destination);
+      if (fitness > this.max_fitness) this.max_fitness = fitness;
       this.fitness_sum += fitness;
     }
   }
@@ -62,6 +73,14 @@ class Population {
     }
     this.generation++;
     this.rockets = next_generation;
+  }
+
+  updateMutation() {
+    if (this.any_rocket_arrived) {
+      this.mutation_rate *= this.mutation_change;
+    } else {
+      this.mutation_rate = this.init_mutation_rate;
+    }
   }
 
   // Natural selection based on a weighted random based on fitness

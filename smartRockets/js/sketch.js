@@ -34,15 +34,19 @@ function draw() {
   ellipse(destination.x, destination.y, 12, 12);
   text(`Steps remaining: ${cycle}`, 10, height - 50);
   text(`Generation: ${population.generation}`, 10, height - 30);
-  text(`Fastest time: ${population.fastest_time}`, 10, height - 10);
+  text(`Best time: ${population.gen_fastest_time}`, 100, height - 30);
+  text(`Overall Best time: ${population.fastest_time}`, 10, height - 10);
   for (let i = 0; i < obstacles.length; i++) {
     stroke(255);
     strokeWeight(2);
     line(obstacles[i].x1, obstacles[i].y1, obstacles[i].x2, obstacles[i].y2);
   }
   if (!cycle) {
+    const gft = population.gen_fastest_time;
     population.evolve(destination);
+    // console.log(`Best fitness from last generation: ${population.max_fitness} with a time of ${gft}`);
   }
+
   if (x1) {
     stroke(255);
     strokeWeight(5);
