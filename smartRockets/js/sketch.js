@@ -9,9 +9,8 @@ let rx, ry;
 let newRect;
 
 function setup() {
-  debugger;
-  width = windowWidth * 0.9;
-  height = windowHeight * 0.9;
+  width = windowWidth * 0.75;
+  height = windowHeight * 0.75;
   x = (windowWidth - width) / 2;
   y = (windowHeight - height) / 2;
   const cnv = createCanvas(width, height);
@@ -33,7 +32,7 @@ function draw() {
   fill(255);
   noStroke();
   ellipse(destination.x, destination.y, 12, 12);
-  text(`Life cycle: ${cycle}`, 10, height - 50);
+  text(`Steps remaining: ${cycle}`, 10, height - 50);
   text(`Generation: ${population.generation}`, 10, height - 30);
   text(`Fastest time: ${population.fastest_time}`, 10, height - 10);
   for (let i = 0; i < obstacles.length; i++) {

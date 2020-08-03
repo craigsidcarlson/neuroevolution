@@ -11,6 +11,7 @@ class Rocket {
     this.crashed = false;
     this.abs_dist;
     this.cycle_arrived = 0;
+    this.num_done = 0;
   }
 
   applyForce(force) {
