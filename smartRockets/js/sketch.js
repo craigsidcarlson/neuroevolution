@@ -61,6 +61,9 @@ function mousePressed() {
       x1 = null;
       y1 = null;
     }
+  } else {
+    x1 = null;
+    y1 = null;
   }
   
   // prevent default

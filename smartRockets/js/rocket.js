@@ -1,14 +1,16 @@
 class Rocket {
   constructor(lifespan) {
+    this.lifespan = lifespan;
     this.pos = createVector(25,height/2);
     this.vel = createVector();
     this.acc = createVector();
     this.special = false;
     this.color = this.special ? color('red') : color(246, 193, 1, 150);
-    this.dna = new DNA(lifespan);
+    this.dna = new DNA(this.lifespan);
     this.max_speed = 3;
     this.arrived = false;
     this.crashed = false;
+    this.fled = false;
     this.abs_dist;
     this.cycle_arrived = 0;
     this.collision_dist = 2;
@@ -21,14 +23,19 @@ class Rocket {
   // pass in target (x & y coordinates that it is trying to reach) 
   calculate_fitness() {
     const fitness = 1 / (this.abs_dist + 0.00001);
-    this.dna.fitness = pow(fitness, 4);
+    this.dna.fitness = pow(fitness, 3);
 
     if (this.crashed) {
-      this.dna.fitness /= 2;
+      this.dna.fitness *= 0.5;
+    }
+
+    if(this.fled) {
+      this.dna.fitness *= 0.9;
     }
 
     if (this.arrived) {
-      this.dna.fitness *= pow(this.cycle_arrived, 4);
+      const speed_fitness = 1 / (this.cycle_arrived / this.lifespan )
+      this.dna.fitness *= pow(speed_fitness, 3);
     }
     return this.dna.fitness;
   }
@@ -42,7 +49,7 @@ class Rocket {
     }
 
     if (this.pos.x < 0 || this.pos.x > width || this.pos.y < 0 || this.pos.y > height) {
-      this.crashed = true;
+      this.fled = true;
       this.color = color('purple');
     }
 
@@ -54,7 +61,7 @@ class Rocket {
     }
 
     this.applyForce(this.dna.genes[cycle]);
-    if (!this.arrived && !this.crashed) {
+    if (!this.arrived && !this.crashed && !this.fled) {
       this.vel.add(this.acc);
       this.vel.limit(this.max_speed);
       this.pos.add(this.vel);

@@ -1,6 +1,6 @@
 class Population {
-  constructor(rate = 0.01, num_ind = 200) {
-    this.lifespan = 1000;
+  constructor(rate = 0.005, num_ind = 200) {
+    this.lifespan = floor(width);
     this.generation = 0;
     this.finished = false;
     this.mutation_rate = rate;
@@ -27,7 +27,7 @@ class Population {
         if (time < this.fastest_time) this.fastest_time = time;
       }
       this.rockets[i].show();
-      if (this.rockets[i].crashed || this.rockets[i].arrived) rockets_finished++;
+      if (this.rockets[i].crashed || this.rockets[i].arrived || this.rockets[i].fled) rockets_finished++;
     }
     if (rockets_finished === this.rockets.length) return;
     this.cycle--;
