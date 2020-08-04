@@ -35,9 +35,14 @@ class Environment {
   }
   addPoison() {
     if (random(1) < 0.01) {
-      var x = random(this.boundary_dist, width-this.boundary_dist);
-      var y = random(this.boundary_dist, height-this.boundary_dist);
-      this.poison.push(createVector(x, y));
+      if (this.poison.length  < 200) {
+        var x = random(this.boundary_dist, width-this.boundary_dist);
+        var y = random(this.boundary_dist, height-this.boundary_dist);
+        this.poison.push(createVector(x, y));
+      } else {
+        this.food.push(this.poison[0]);
+        this.poison.shift();
+      }
     }
   }
 

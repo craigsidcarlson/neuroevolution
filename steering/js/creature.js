@@ -22,7 +22,7 @@ class Creature {
   }
   
   update() {
-    this.health -= 0.003;
+    this.health -= 0.0028;
 
     this.vel.add(this.acc);
     this.vel.limit(this.max_speed);
@@ -50,7 +50,10 @@ class Creature {
 
   clone() {
     if (random(1) < this.clone_prob) {
-      return new Creature(this.pos.x, this.pos.y, this.dna);
+      const num_clones = ceil(this.health * 2);
+      for (let i = 0; i < num_clones; i++) {
+        return new Creature(this.pos.x, this.pos.y, this.dna);
+      }
     }
   }
 
