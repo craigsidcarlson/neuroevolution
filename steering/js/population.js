@@ -1,61 +1,50 @@
 class Population {
-  constructor(rate = 0.005, num_ind = 200) {
-    this.lifespan = floor(width);
+  constructor(size) {
     this.generation = 0;
-    this.finished = false;
-    this.init_mutation_rate = rate;
-    this.mutation_rate = this.init_mutation_rate;
-    this.mutation_change = 0.97;
-    this.perfect_score = 1;
-    this.num_individuals = num_ind;
+    this.size = size;
     this.fitness_sum = 0;
     this.max_fitness = 0;
-    this.rockets = [];
-    for (let i = 0; i < this.num_individuals; i++) {
-      this.rockets[i] = new Rocket(this.lifespan);
+    this.creatures = [];
+    for (let i = 0; i < this.size; i++) {
+      const x = random(width);
+      const y = random(height);
+      this.creatures[i] = new Creature(x, y);
     }
-    this.cycle = this.lifespan;
-    this.fastest_time = Infinity;
-    this.gen_fastest_time = Infinity;
 
-    this.any_rocket_arrived = false;
   }
 
-  show() {
-    let rockets_finished = 0;
-    if (this.cycle > this.lifespan) return;
-    for (let i = 0; i < this.rockets.length; i++) {
-      const cycle_arrived = this.rockets[i].update(this.cycle);
-      if (cycle_arrived) {
-        this.any_rocket_arrived = true;
-        const time = this.lifespan - cycle_arrived;
-        if (time < this.gen_fastest_time) this.gen_fastest_time = time;
+  show(food, poison) {
+    for (let i = 0; i < this.creatures.length; i++) {
+
+      this.creatures[i].boundaries();
+      this.creatures[i].behaviors(food, poison);
+      this.creatures[i].update();
+      this.creatures[i].show();
+
+      const new_creature = this.creatures[i].clone();
+      if (new_creature != null) {
+        this.creatures.push(new_creature);
       }
-      this.rockets[i].show();
-      if (this.rockets[i].crashed || this.rockets[i].arrived || this.rockets[i].fled) rockets_finished++;
+
+      if (this.creatures[i].dead()) {
+        const x = this.creatures[i].pos.x;
+        const y = this.creatures[i].pos.y;
+        food.push(createVector(x,y));
+        this.creatures.splice(i, 1);
+      }      
     }
-    if (rockets_finished === this.rockets.length) return;
-    this.cycle--;
-    return this.cycle;
   }
 
-  evolve(destination) {
-    this.cycle = this.lifespan;
-    if (this.gen_fastest_time < this.fastest_time) this.fastest_time = this.gen_fastest_time;
-    this.calculate_fitness(destination, this.cycle);
-    this.updateMutation();
+  evolve() {
+    this.calculate_fitness();
     this.generate();
     this.generation++;
-    this.any_rocket_arrived = false;
-    this.gen_fastest_time = Infinity;
   }
 
   // Calculate Fitness
-  calculate_fitness(destination) {
-    this.fitness_sum = 0;
-    this.max_fitness = 0;
-    for (let i = 0; i < this.rockets.length; i++) {
-      const fitness = this.rockets[i].calculate_fitness(destination);
+  calculate_fitness() {
+    for (let i = 0; i < this.creatures.length; i++) {
+      const fitness = this.creatures[i].calculate_fitness(destination);
       if (fitness > this.max_fitness) this.max_fitness = fitness;
       this.fitness_sum += fitness;
     }
@@ -64,23 +53,15 @@ class Population {
   // Create next generation
   generate() {
     const next_generation = [];
-    for (let i = 0; i < this.rockets.length; i++) {
-      const parent_a = this.pickOne(this.rockets);
-      const parent_b = this.pickOne(this.rockets);
-      const child = parent_a.dna.breedWith(parent_b.dna, Rocket);
+    for (let i = 0; i < this.creatures.length; i++) {
+      const parent_a = this.pickOne(this.creatures);
+      const parent_b = this.pickOne(this.creatures);
+      const child = parent_a.dna.breedWith(parent_b.dna, Creature);
       child.dna.mutate(this.mutation_rate);
       next_generation[i] = child;
     }
     this.generation++;
-    this.rockets = next_generation;
-  }
-
-  updateMutation() {
-    if (this.any_rocket_arrived) {
-      this.mutation_rate *= this.mutation_change;
-    } else {
-      this.mutation_rate = this.init_mutation_rate;
-    }
+    this.creatures = next_generation;
   }
 
   // Natural selection based on a weighted random based on fitness
