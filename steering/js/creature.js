@@ -97,7 +97,7 @@ class Creature {
     var rd = color(255, 0, 0);
     this.color = lerpColor(rd, gr, this.health);
     stroke(this.color);
-    noFill();
+    fill(this.color);
 		const r = 3;
 		const angle = this.vel.heading();
 		const anglePlus = 2.5;
@@ -108,8 +108,7 @@ class Creature {
     );
   }
 
-  boundaries() {
-    const d = 25;
+  boundaries(d) {
     let desired = null;
 
     if (this.pos.x < d) {

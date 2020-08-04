@@ -1,7 +1,8 @@
 class Population {
-  constructor(size) {
+  constructor(size, d) {
     this.generation = 0;
     this.size = size;
+    this.d = d;
     this.fitness_sum = 0;
     this.max_fitness = 0;
     this.creatures = [];
@@ -16,7 +17,7 @@ class Population {
   show(food, poison) {
     for (let i = 0; i < this.creatures.length; i++) {
 
-      this.creatures[i].boundaries();
+      this.creatures[i].boundaries(this.d);
       this.creatures[i].behaviors(food, poison);
       this.creatures[i].update();
       this.creatures[i].show();

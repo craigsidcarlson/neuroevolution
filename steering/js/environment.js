@@ -1,7 +1,8 @@
 class Environment {
   constructor() {
     this.population_size = 100;
-    this.population = new Population(this.population_size);
+    this.boundary_dist = 25;
+    this.population = new Population(this.population_size, this.boundary_dist);
     this.food = [];
     this.poison = [];
     this.num_food = 40;
@@ -26,16 +27,16 @@ class Environment {
   }
 
   addFood() {
-    if (random(1) < 0.015) {
-      var x = random(width);
-      var y = random(height);
+    if (random(1) < 0.018) {
+      var x = random(this.boundary_dist, width-this.boundary_dist);
+      var y = random(this.boundary_dist, height-this.boundary_dist);
       this.food.push(createVector(x, y));
     }
   }
   addPoison() {
     if (random(1) < 0.01) {
-      var x = random(width);
-      var y = random(height);
+      var x = random(this.boundary_dist, width-this.boundary_dist);
+      var y = random(this.boundary_dist, height-this.boundary_dist);
       this.poison.push(createVector(x, y));
     }
   }
