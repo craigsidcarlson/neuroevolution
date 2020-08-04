@@ -5,7 +5,7 @@ class Environment {
     this.population = new Population(this.population_size, this.boundary_dist);
     this.food = [];
     this.poison = [];
-    this.num_food = 40;
+    this.num_food = 400;
     this.num_poison = 20;
 
     // Populate food
@@ -35,7 +35,7 @@ class Environment {
   }
   addPoison() {
     if (random(1) < 0.01) {
-      if (this.poison.length  < 200) {
+      if (this.poison.length  < 100) {
         var x = random(this.boundary_dist, width-this.boundary_dist);
         var y = random(this.boundary_dist, height-this.boundary_dist);
         this.poison.push(createVector(x, y));
