@@ -44,7 +44,7 @@ function draw() {
   if (!cycle) {
     const gft = population.gen_fastest_time;
     population.evolve(destination);
-    console.log(`Best fitness from last generation: ${population.max_fitness} with a time of ${gft}`);
+    // console.log(`Best fitness from last generation: ${population.max_fitness} with a time of ${gft}`);
   }
 
   if (x1) {

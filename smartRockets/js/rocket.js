@@ -25,14 +25,14 @@ class Rocket {
   calculate_fitness() {
     if (this.arrived) {
       this.dna.fitness = 1;
+      this.dna.fitness *= pow(((this.cycle_arrived / this.lifespan) + 0.00000001), 4)  * 10; 
     } else  {
       const inverse_dist = 1 / (this.abs_dist + 0.00000001);
       this.dna.fitness = pow(inverse_dist, 3);
     }
-    this.dna.fitness *= pow(((this.cycle_arrived / this.lifespan) + 0.00000001), 4)  * 10; 
 
-    if (this.crashed) this.dna.fitness *= 0.1;
-    if (this.fled) this.dna.fitness *= 0.5;
+    if (this.crashed) this.dna.fitness *= 0.2;
+    if (this.fled) this.dna.fitness *= 0.3;
     
     return this.dna.fitness;
   }
