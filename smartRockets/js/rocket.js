@@ -31,7 +31,7 @@ class Rocket {
       this.dna.fitness = pow(inverse_dist, 3);
     }
 
-    if (this.crashed) this.dna.fitness *= 0.2;
+    if (this.crashed) this.dna.fitness *= 0.25;
     if (this.fled) this.dna.fitness *= 0.3;
     
     return this.dna.fitness;
@@ -66,6 +66,7 @@ class Rocket {
       this.pos.add(this.vel);
       this.acc.mult(0);
     }
+    if (this.abs_dist > this.min_dist) this.min_dist = this.abs_dist;
     return this.cycle_arrived;
   }
 
