@@ -10,6 +10,7 @@ let newRect;
 
 function setup() {
   width = windowWidth * 0.75;
+  //width = 500;
   height = windowHeight * 0.75;
   x = (windowWidth - width) / 2;
   y = (windowHeight - height) / 2;
@@ -27,15 +28,22 @@ function init() {
  
 function draw() {
   background(44, 62, 80);
-  const cycle = population.show();
-
-  fill(255);
+  const cycle = population.update();
   noStroke();
+  fill(255);
+  if(population.first_arrived_color) {
+    stroke(255);
+    fill(population.first_arrived_color);
+  }
   ellipse(destination.x, destination.y, 12, 12);
+  noStroke();
+  fill(255);
   text(`Step: ${population.lifespan - cycle}`, 10, height - 50);
   text(`Generation: ${population.generation}`, 10, height - 30);
-  text(`Best time: ${population.gen_fastest_time}`, 100, height - 30);
-  text(`Overall Best time: ${population.fastest_time}`, 10, height - 10);
+  if (population.gen_best_time !== Infinity) text(`Best: ${population.gen_best_time}`, 105, height - 30);
+  if (population.best_time !== Infinity) text(`Overall Best: ${population.best_time}${population.best_name}`, 10, height - 10);
+
+  text(`Yellow: ${population.species[0].count} Blue: ${population.species[1].count} Green: ${population.species[2].count}`, width - 200, height - 10);
   for (let i = 0; i < obstacles.length; i++) {
     stroke(255);
     strokeWeight(2);
@@ -44,7 +52,6 @@ function draw() {
   if (!cycle) {
     const gft = population.gen_fastest_time;
     population.evolve(destination);
-    // console.log(`Best fitness from last generation: ${population.max_fitness} with a time of ${gft}`);
   }
 
   if (x1) {

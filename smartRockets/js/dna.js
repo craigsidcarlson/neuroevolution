@@ -12,8 +12,8 @@ class DNA {
     }
  }
  
- breedWith(parent_b, _className) {
-  const child = new _className(this.lifespan);
+ breedWith(parent_b, _className, params) {
+  const child = new _className(params);
   for (let i = 0; i < this.genes.length; i++) {
     if (i < this.slice_point) child.dna.genes[i] = this.genes[i];
     else child.dna.genes[i] = parent_b.genes[i];

@@ -1,97 +1,74 @@
 class Population {
-  constructor(rate = 0.005, num_ind = 200) {
+  constructor(rate = 0.005, num_individuals = 200) {
     this.lifespan = floor(width);
     this.generation = 0;
-    this.finished = false;
-    this.init_mutation_rate = rate;
-    this.mutation_rate = this.init_mutation_rate;
-    this.mutation_change = 0.97;
-    this.perfect_score = 1;
-    this.num_individuals = num_ind;
-    this.fitness_sum = 0;
-    this.max_fitness = 0;
-    this.rockets = [];
-    for (let i = 0; i < this.num_individuals; i++) {
-      this.rockets[i] = new Rocket(this.lifespan);
+    this.max_rockets = num_individuals;
+    this.min_per_species = 33;
+    this.species_count = 3;
+    this.max_per_species = this.max_rockets - ((this.species_count - 1) * this.min_per_species);
+    this.best_time = Infinity;
+    this.best_name = "";
+    this.gen_best_time = Infinity;
+    this.first_arrived_color;
+    this.species = [];
+    for ( let i  = 0; i< this.species_count; i++) {
+      this.species.push(new Species(i, rate, this.lifespan));
     }
-    this.cycle = this.lifespan;
-    this.fastest_time = Infinity;
-    this.gen_fastest_time = Infinity;
+    this.num_rockets = 0;
+    const rockets_per_species = floor(num_individuals/this.species_count);
+    for (let i = 0; i < this.species.length; i++) {
+      this.species[i].addRockets(rockets_per_species);
+      this.num_rockets += rockets_per_species;
+    }
 
-    this.any_rocket_arrived = false;
+    this.cycle = this.lifespan;
   }
 
-  show() {
+  update() {
     let rockets_finished = 0;
     if (this.cycle > this.lifespan) return;
-    for (let i = 0; i < this.rockets.length; i++) {
-      const cycle_arrived = this.rockets[i].update(this.cycle);
-      if (cycle_arrived) {
-        this.any_rocket_arrived = true;
-        const time = this.lifespan - cycle_arrived;
-        if (time < this.gen_fastest_time) this.gen_fastest_time = time;
+    for (let i = 0; i < this.species.length; i++) {
+      rockets_finished += this.species[i].update(this.cycle);
+      if (this.species[i].species_arrived && !this.first_arrived_color) {
+        this.first_arrived_color = this.species[i].color;
+        if (this.species[i].gen_fastest_time < this.gen_best_time)  { 
+          this.gen_best_time = this.species[i].gen_fastest_time;
+        }
+        if (this.species[i].gen_fastest_time < this.best_time) {
+          this.best_time = this.species[i].gen_fastest_time;
+          this.best_name = this.species[i].name;
+        }
       }
-      this.rockets[i].show();
-      if (this.rockets[i].crashed || this.rockets[i].arrived || this.rockets[i].fled) rockets_finished++;
     }
-    if (rockets_finished === this.rockets.length) return;
+    if (rockets_finished === this.num_rockets) return;
     this.cycle--;
     return this.cycle;
   }
 
+  // Calculate Fitness
   evolve(destination) {
     this.cycle = this.lifespan;
-    if (this.gen_fastest_time < this.fastest_time) this.fastest_time = this.gen_fastest_time;
-    this.calculate_fitness(destination, this.cycle);
-    this.updateMutation();
-    this.generate();
+    this.num_rockets = 0;
+    let fitness_sum = 0;
+    for (let i = 0; i < this.species.length; i++) {
+      const avg_species_performance = this.species[i].calculate_fitness(destination, this.cycle);
+      fitness_sum += avg_species_performance;
+    }
+    for (let i = 0; i < this.species.length; i++) {
+      let num_in_next_gen = ceil((this.species[i].avg_fitness / fitness_sum) * this.max_rockets);
+      if (num_in_next_gen < this.min_per_species) num_in_next_gen = this.min_per_species;
+      if (num_in_next_gen > this.max_per_species) num_in_next_gen = this.max_per_species;
+      this.num_rockets += num_in_next_gen;
+      this.species[i].generate(num_in_next_gen);
+      this.species[i].species_arrived = false;
+      this.species[i].gen_fastest_time = Infinity;
+    }
+    if (this.gen_best_time === Infinity) {
+      this.best_time = Infinity;
+      this.best_name = undefined;
+    }
+    this.gen_best_time = Infinity;
+    this.first_arrived_color = undefined;
     this.generation++;
-    this.any_rocket_arrived = false;
-    this.gen_fastest_time = Infinity;
-  }
-
-  // Calculate Fitness
-  calculate_fitness(destination) {
-    this.fitness_sum = 0;
-    this.max_fitness = 0;
-    for (let i = 0; i < this.rockets.length; i++) {
-      const fitness = this.rockets[i].calculate_fitness(destination);
-      if (fitness > this.max_fitness) this.max_fitness = fitness;
-      this.fitness_sum += fitness;
-    }
-  }
-
-  // Create next generation
-  generate() {
-    const next_generation = [];
-    for (let i = 0; i < this.rockets.length; i++) {
-      const parent_a = this.pickOne(this.rockets);
-      const parent_b = this.pickOne(this.rockets);
-      const child = parent_a.dna.breedWith(parent_b.dna, Rocket);
-      child.dna.mutate(this.mutation_rate);
-      next_generation[i] = child;
-    }
-    this.generation++;
-    this.rockets = next_generation;
-  }
-
-  updateMutation() {
-    if (this.any_rocket_arrived) {
-      this.mutation_rate *= this.mutation_change;
-    } else {
-      this.mutation_rate = this.init_mutation_rate;
-    }
-  }
-
-  // Natural selection based on a weighted random based on fitness
-  pickOne(list) {
-    let index = 0;
-    let r = random(0, this.fitness_sum);
-    while (r > 0) {
-      r -= list[index].dna.fitness;
-      index++;
-    }
-
-    return list[index-1];
   }
 }

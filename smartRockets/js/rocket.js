@@ -1,11 +1,14 @@
 class Rocket {
-  constructor(lifespan) {
+  constructor(params) {
+    const { lifespan, species, color } = params;
+    if (!lifespan) debugger;
     this.lifespan = lifespan;
+    this.species = species;
+    this.color = color
     this.pos = createVector(25,height/2);
     this.vel = createVector();
     this.acc = createVector();
     this.special = false;
-    this.color = this.special ? color('red') : color(246, 193, 1, 150);
     this.dna = new DNA(this.lifespan);
     this.max_speed = 3;
     this.arrived = false;
@@ -33,7 +36,7 @@ class Rocket {
 
     if (this.crashed) this.dna.fitness *= 0.25;
     if (this.fled) this.dna.fitness *= 0.3;
-    
+    if (!this.dna.fitness) debugger;
     return this.dna.fitness;
   }
 
@@ -41,7 +44,6 @@ class Rocket {
     this.abs_dist = abs(dist(this.pos.x, this.pos.y, destination.x, destination.y));
     if (this.abs_dist < 6 && !this.arrived) {
       this.arrived = true;
-      this.color = color('green');
       this.cycle_arrived = cycle;
     }
 
